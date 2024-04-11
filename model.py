@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class Stone(Enum):
+    BLANK = 0
     WHITE = 1
     BLACK = 2
 
@@ -12,24 +13,25 @@ class Stone(Enum):
 # ボードを作成するクラス。
 class OthelloBoard():
     def __init__(self):
-        self.__board = [[0 for _ in range(8)]for _ in range((8))]
+        self.__board = [[Stone.BLANK for _ in range(8)]for _ in range((8))]
         self.__board[3][3] = Stone.BLACK
-        self.__board[3][4] = Stone.WHITE.value
-        self.__board[4][3] = Stone.WHITE.value
-        self.__board[4][4] = Stone.BLACK.value
+        self.__board[3][4] = Stone.WHITE
+        self.__board[4][3] = Stone.WHITE
+        self.__board[4][4] = Stone.BLACK
 
     def get_board(self) -> list:  # ボードのリストを返すメソッド
         return self.__board
     
     def change_board(self, row: int, column: int, stone: Stone) -> None:  # ボードの状態を更新するメソッド
         if self.__is_blank(row, column):
-            self.__board[row][column] = stone.value
+            self.__board[row][column] = stone
             # この部分で、反転させる関数を呼び出す。
             return
-        print("ここに石は置けません。")  # この下に再度繰り返す処理が必要か
+        raise ValueError
+        # print("ここに石は置けません。")  # この下に再度繰り返す処理が必要か
         
     def __is_blank(self, row: int, column: int) -> bool:  # 石がボード上に存在しているかを確認するメソッド
-        return self.__board[row][column] == 0
+        return self.__board[row][column] == Stone.BLANK
 
 
 # プレーヤーを作成するクラス。
@@ -42,15 +44,18 @@ class OthelloPlayer:
         board.change_board(row, column, self.stone)  
         # この中に、石を反転させるメソットを記載。
     
-    # def reverse_stones(self, row: int, column: int, board: OthelloBoard):
-    #     for column_idou in self.zahyou_idou:
-    #         for row_idou in self.zahyou_idou:
-    #             if board[row + row_idou][column + column_idou] == 2:
-    #                 for is_reverse in range(2, 8):
-    #                     if board[row + row_idou * is_reverse][column + column_idou * is_reverse] == 0:
-    #                         break
-    #                     if board[row + row_idou * is_reverse][column + column_idou * is_reverse] == 2:
-    #                         continue
+    def reverse_stones(self, row: int, column: int, board: OthelloBoard):
+        for column_idou in self.zahyou_idou:
+            for row_idou in self.zahyou_idou:
+                if board[row + row_idou][column + column_idou] == Stone.BLACK:
+                    for is_reverse in range(2, 8):
+                        if board[row + row_idou * is_reverse][column + column_idou * is_reverse] == Stone.BLANK:
+                            break
+                        if board[row + row_idou * is_reverse][column + column_idou * is_reverse] == Stone.BLACK:
+                            continue
+                        if board[row + row_idou * is_reverse][column + column_idou * is_reverse] == self.stone:
+                            for reverse in range(is_reverse):
+                                board[row + row_idou * reverse][column + column_idou * reverse] == self.stone
 
 
 
@@ -61,9 +66,9 @@ class StandardIO:  # view.pyに入れる
         return self.row, self.column
 
     def __show_stone(self, i: int) -> str:  # リスト内の数字を石やブランクに変更するメソッド
-        if i == 1:
+        if i == Stone.WHITE:
             return '●'
-        if i == 2:
+        if i == Stone.BLACK:
             return '○'
         return '-'
 
