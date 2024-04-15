@@ -68,18 +68,21 @@ class OthelloBoard():
                     if row + row_idou <= -1 or column + column_idou <= -1:  # リストの範囲を超えた場合はエラーを起こす。
                         raise IndexError
                 except IndexError:
-                    continue         
-                if self.__board[row + row_idou][column + column_idou] == enemy_stone:  # 指定した座標の周りに敵の石があった場合の処理。
-                    for reverse_check in range(2, 8):  # 敵の石と自分の石を結んだ線上の確認。（確認する範囲は、最大でも7箇所）
-                        if self.__board[row + row_idou * reverse_check][column + column_idou * reverse_check] == Stone.BLANK:  # 途中で何も置かれていない座標があればその時点で繰り返し処理を終了。
-                            break
-                        if self.__board[row + row_idou * reverse_check][column + column_idou * reverse_check] == enemy_stone:  # 敵の石が置かれていた場合は、繰り返し処理を続ける。
-                            continue
-                        if self.__board[row + row_idou * reverse_check][column + column_idou * reverse_check] == stone:  # 自分の石があった場合は、その時点までであった石を全て反転させる。
-                            for reverse in range(reverse_check):
-                                self.__board[row + row_idou * reverse][column + column_idou * reverse] = stone
-                            break  # 反転させる処理を実行したら処理は終了させる。（○、●、○、●、○ と並んでいた場合に全て反転させてしまうため）
-    
+                    continue
+                try:        
+                    if self.__board[row + row_idou][column + column_idou] == enemy_stone:  # 指定した座標の周りに敵の石があった場合の処理。
+                        for reverse_check in range(2, 8):  # 敵の石と自分の石を結んだ線上の確認。（確認する範囲は、最大でも7箇所）
+                            if self.__board[row + row_idou * reverse_check][column + column_idou * reverse_check] == Stone.BLANK:  # 途中で何も置かれていない座標があればその時点で繰り返し処理を終了。
+                                break
+                            if self.__board[row + row_idou * reverse_check][column + column_idou * reverse_check] == enemy_stone:  # 敵の石が置かれていた場合は、繰り返し処理を続ける。
+                                continue
+                            if self.__board[row + row_idou * reverse_check][column + column_idou * reverse_check] == stone:  # 自分の石があった場合は、その時点までであった石を全て反転させる。
+                                for reverse in range(reverse_check):
+                                    self.__board[row + row_idou * reverse][column + column_idou * reverse] = stone
+                                break  # 反転させる処理を実行したら処理は終了させる。（○、●、○、●、○ と並んでいた場合に全て反転させてしまうため）
+                except IndexError:
+                    continue
+                
     def victory_judge(self, final_board: list) -> bool:  # 勝ち負けを判定するメソッド
         white_stone_count = final_board.count(Stone.WHITE)
         black_stone_count = final_board.count(Stone.BLACK)
