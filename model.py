@@ -17,12 +17,14 @@ class OthelloBoard():
         self.__board[4][3] = Stone.BLACK
         self.__board[4][4] = Stone.WHITE
         self.zahyou_idou = [-1, 0, 1]  # 置いた石の全方位を網羅するためのリスト。
+        self.white_result_list = 0
+        self.black_result_list = 0
 
     def get_board(self) -> list:  # ボードのリストを返すメソッド
         return self.__board
     
     def change_board(self, row: int, column: int, stone: Stone, enemy_stone) -> None:  # ボードの状態を更新するメソッド
-        if self.board_range(row, column) and self.__is_blank(row, column):  # 指定した座標がボードの範囲、すでに石が乗っているかを確認。
+        if self.board_range(row, column) and self.is_blank(row, column):  # 指定した座標がボードの範囲、すでに石が乗っているかを確認。
             if self.can_reverse_on_board(row, column, stone, enemy_stone):  # 指定した座標に石が置けるか確認(反転させることができる石があるかを確認)
                 self.__board[row][column] = stone  # 全ての条件を満たした時に、指定した座標に石を置く。
                 self.reverse_stones(row, column, stone, enemy_stone) # 石を反転させる。
@@ -34,7 +36,7 @@ class OthelloBoard():
         if row >= 0 and row <= 7 and column >= 0 and column <= 7:
             return True
 
-    def __is_blank(self, row: int, column: int) -> bool:  # 石がボード上に存在しているかを確認するメソッド
+    def is_blank(self, row: int, column: int) -> bool:  # 石がボード上に存在しているかを確認するメソッド
         return self.__board[row][column] == Stone.BLANK
 
     def can_reverse_on_board(self, row: int, column: int, stone: Stone, enemy_stone: Stone) -> bool:  # 石を置くことで、反転する石があるかを確認するメソッド
@@ -84,10 +86,13 @@ class OthelloBoard():
                     continue
                 
     def victory_judge(self, final_board: list) -> bool:  # 勝ち負けを判定するメソッド
-        white_stone_count = final_board.count(Stone.WHITE)
-        black_stone_count = final_board.count(Stone.BLACK)
-        if white_stone_count > black_stone_count:  # 白い石が黒石より多い時は、Trueを返す。
+        for i in range(8):
+            self.white_result_list += final_board[i].count(Stone.WHITE)
+            self.black_result_list += final_board[i].count(Stone.BLACK)
+        if self.white_result_list > self.black_result_list:  # 白い石が黒石より多い時は、Trueを返す。
             return True
+        if self.black_result_list > self.white_result_list:
+            return False
 
 
 # プレーヤーに関するクラス。
@@ -104,3 +109,13 @@ class OthelloPlayer:
             return Stone.WHITE
         if stone == Stone.WHITE:
             return Stone.BLACK
+        
+    def can_put_judge(self, board: OthelloBoard):
+        judge_list = []
+        for row in range(8):
+            for column in range(8):
+                if board.board_range(row, column) and board.can_reverse_on_board(row, column, self.stone, self.enemy_stone) and board.is_blank(row, column):
+                    judge_list.append("True")
+        if judge_list.count("True") > 0:
+            return True
+        return False
