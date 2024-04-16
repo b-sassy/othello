@@ -1,4 +1,5 @@
 import argparse
+import time
 from model import Stone, OthelloBoard, OthelloPlayer
 from view import StandardIO
 
@@ -57,6 +58,7 @@ def main(mode):
                 break  # 石が置けたら、繰り返し処理からでて、次のプレイヤーに交代。
             arrangement_stone.show_board(use_board.get_board())  # 更新されたボードの表示。
             while player_2.can_put_judge(use_board):  # プレイヤー2が置ける場合は繰り返す。
+                time.sleep(3)
                 try:
                     arrangement_stone.show_can_put(player_2, use_board) # 石を置くことが出来る座標の表示。
                     player_2.cpu_put(use_board)  # 石を置くことができる座標の中からランダムに座標を返す。
@@ -78,6 +80,7 @@ def main(mode):
         player_1 = OthelloPlayer(Stone.WHITE)  # 白い石を持ったプレイヤーのインスタンスの生成
         player_2 = OthelloPlayer(Stone.BLACK)  # 黒い石を持ったプレイヤーのインスタンスの生成
         while player_1.can_put_judge(use_board) or player_2.can_put_judge(use_board):  # 両方のプレイヤーが石を置けなくなるまで繰り返す。
+            time.sleep(3)
             while player_1.can_put_judge(use_board):  # プレイヤー1が置ける場合は繰り返す。
                 try:
                     arrangement_stone.show_can_put(player_1, use_board)  # 石を置くことが出来る座標の表示。
@@ -91,6 +94,7 @@ def main(mode):
                 break  # 石が置けたら、繰り返し処理からでて、次のプレイヤーに交代。
             arrangement_stone.show_board(use_board.get_board())  # 更新されたボードの表示。
             while player_2.can_put_judge(use_board):  # プレイヤー2が置ける場合は繰り返す。
+                time.sleep(3)
                 try:
                     arrangement_stone.show_can_put(player_2, use_board) # 石を置くことが出来る座標の表示。
                     player_2.cpu_put(use_board)  # 石を置くことができる座標の中からランダムに座標を返す。
@@ -107,6 +111,6 @@ def main(mode):
 
 if __name__ == '__main__': 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--mode', type=str)
+    parser.add_argument('--mode', type=str, default="PvC")
     args = parser.parse_args()
     main(args.mode)

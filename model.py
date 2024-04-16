@@ -1,7 +1,6 @@
 import random
 from enum import Enum
 
-
 # 石に関するクラス
 class Stone(Enum):
     BLANK = 0
