@@ -12,9 +12,7 @@ class StandardIO:
             return '●'
         if i == Stone.BLACK:
             return '○'
-        if i == Stone.BLANK:
-            return '-'
-        return '='
+        return '-'
 
     def show_board(self, board: list) -> None:  # 受け取ったリストを出力するメソッド
         for i, a_row in enumerate(board):
@@ -25,8 +23,10 @@ class StandardIO:
         print("ここには置けません。もう1度置いてください。")
         print("====================================")
 
-    def show_victory(self, final_board: list) -> None:
-        if OthelloBoard.victory_judge(self, final_board):
+    def show_victory(self, board: OthelloBoard, final_board: list) -> None:
+        if board.victory_judge(final_board):
             print("白の勝ちです。")
-        print("黒の勝ちです。")
+        if not board.victory_judge(final_board):
+            print("黒の勝ちです。")
+
 
