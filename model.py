@@ -1,3 +1,4 @@
+import random
 from enum import Enum
 
 
@@ -112,7 +113,7 @@ class OthelloPlayer:
         if stone == Stone.WHITE:
             return Stone.BLACK
         
-    def can_put_judge(self, board: OthelloBoard):
+    def can_put_judge(self, board: OthelloBoard) -> bool:
         judge_list = []
         for row in range(8):
             for column in range(8):
@@ -121,3 +122,16 @@ class OthelloPlayer:
         if judge_list.count("True") > 0:
             return True
         return False
+
+    def cpu_random_choice(self, board: OthelloBoard):
+        self.cpu_can_put_list = []
+        self.cpu_can_put_all_list = []
+        for row in range(8):
+            for column in range(8):
+                if board.board_range(row, column) and board.can_reverse_on_board(row, column, self.stone, self.enemy_stone) and board.is_blank(row, column):
+                    self.cpu_can_put_list.append(row)
+                    self.cpu_can_put_list.append(column)
+                    self.cpu_can_put_all_list.append(self.cpu_can_put_list)
+                    self.cpu_can_put_list = []
+        print(*self.cpu_can_put_all_list)
+        print(random.choice(self.cpu_can_put_all_list))
