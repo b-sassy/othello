@@ -1,5 +1,4 @@
 from model import Stone, OthelloBoard, OthelloPlayer
-import random
 
 
 # 入出力に関するクラス
@@ -34,4 +33,4 @@ class StandardIO:
         print(f"{player.stone.name}を置ける座標", * player.cpu_random_select(board))
 
     def show_put_coordinate(self, player: OthelloPlayer, board: OthelloBoard, stone: Stone):  # 石を置いた座標を表示するメソッド
-        print(f"プレイヤー{stone} :", " ".join(list(map(str, player.cpu_put(board)))))
+        print(f"プレイヤー{stone}(CPU) :", " ".join(list(map(str, player.cpu_put(board)))))
