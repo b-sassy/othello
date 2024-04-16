@@ -1,10 +1,11 @@
-from model import Stone, OthelloBoard
+from model import Stone, OthelloBoard, OthelloPlayer
+import random
 
 
 # 入出力に関するクラス
 class StandardIO:
     def input_coordinate(self, stone: Stone) -> int:  # 受け取った入力を返すメソッド
-        self.row, self.column = map(int, input(f"プレイヤー{stone}：").split())
+        self.row, self.column = map(int, input(f"プレイヤー{stone} : ").split())
         return self.row, self.column
 
     def __show_stone(self, i: int) -> str:  # リスト内の数字を石やブランクに変更するメソッド
@@ -23,10 +24,14 @@ class StandardIO:
         print("ここには置けません。もう1度置いてください。")
         print("====================================")
 
-    def show_victory(self, board: OthelloBoard, final_board: list) -> None:
+    def show_victory(self, board: OthelloBoard, final_board: list) -> None:  # 勝ち負けを出力するメソッド
         if board.victory_judge(final_board):
             print("白の勝ちです。")
         if not board.victory_judge(final_board):
             print("黒の勝ちです。")
+    
+    def show_can_put(self, player: OthelloPlayer, board: OthelloBoard):  # 石を置くことが出来る座標を表示するメソッド
+        print(f"{player.stone.name}を置ける座標", * player.cpu_random_select(board))
 
-
+    def show_put_coordinate(self, player: OthelloPlayer, board: OthelloBoard, stone: Stone):  # 石を置いた座標を表示するメソッド
+        print(f"プレイヤー{stone} :", " ".join(list(map(str, player.cpu_put(board)))))
