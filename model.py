@@ -1,6 +1,6 @@
 import random
 from enum import Enum
-# from view import IO
+from protocol import IO
 
 
 # 石に関するクラス
@@ -101,12 +101,13 @@ class OthelloBoard():
 
 # プレーヤーに関するクラス。
 class HumanPlayer:
-    def __init__(self, stone: Stone):  # 自分の石と、相手の石の状態を持つ。
+    def __init__(self, stone: Stone, input_coordinate: IO):  # 自分の石と、相手の石の状態を持つ。
         self.stone = stone
         self.enemy_stone = self.player_stone_reverse(self.stone)
+        self.input_coordinate = input_coordinate
 
     def select_coordinate(self, stone: Stone, board: OthelloBoard) -> int:  # 受け取った入力を返すメソッド
-        self.row, self.column = map(int, input(f"プレイヤー{stone} : ").split())
+        self.row, self.column = map(int, self.input_coordinate.coordinate(stone))
         return self.row, self.column
 
     def put_stone(self, row: int, column: int, board: OthelloBoard) -> None:  # 石をボード上に置くメソッド
@@ -119,26 +120,26 @@ class HumanPlayer:
             return Stone.BLACK
         
     def can_put_judge(self, board: OthelloBoard) -> bool:  # 石を置くことが出来る座標があるかを確認するメソッド
-        judge_list = []
+        __judge_list = []
         for row in range(8):
             for column in range(8):
                 if board.board_range(row, column) and board.can_reverse_on_board(row, column, self.stone, self.enemy_stone) and board.is_blank(row, column):
-                    judge_list.append(1)
-        if judge_list.count(1) > 0:
+                    __judge_list.append(1)
+        if __judge_list.count(1) > 0:
             return True
         return False
 
     def can_put_coordinate(self, board: OthelloBoard) -> list:  # 石を置くことが出来る座標をリストに格納するメソッド
-        cpu_can_put_list = []
-        cpu_can_put_all_list = []
+        __cpu_can_put_list = []
+        __cpu_can_put_all_list = []
         for row in range(8):
             for column in range(8):
                 if board.board_range(row, column) and board.can_reverse_on_board(row, column, self.stone, self.enemy_stone) and board.is_blank(row, column):
-                    cpu_can_put_list.append(row)
-                    cpu_can_put_list.append(column)
-                    cpu_can_put_all_list.append(cpu_can_put_list)
-                    cpu_can_put_list = []
-        return cpu_can_put_all_list
+                    __cpu_can_put_list.append(row)
+                    __cpu_can_put_list.append(column)
+                    __cpu_can_put_all_list.append(__cpu_can_put_list)
+                    __cpu_can_put_list = []
+        return __cpu_can_put_all_list
     
 
 class CpuPlayer:
@@ -161,26 +162,26 @@ class CpuPlayer:
             return Stone.BLACK
         
     def can_put_judge(self, board: OthelloBoard) -> bool:  # 石を置くことが出来る座標があるかを確認するメソッド
-        judge_list = []
+        __judge_list = []
         for row in range(8):
             for column in range(8):
                 if board.board_range(row, column) and board.can_reverse_on_board(row, column, self.stone, self.enemy_stone) and board.is_blank(row, column):
-                    judge_list.append(1)
-        if judge_list.count(1) > 0:
+                    __judge_list.append(1)
+        if __judge_list.count(1) > 0:
             return True
         return False
 
     def can_put_coordinate(self, board: OthelloBoard) -> list:  # 石を置くことが出来る座標をリストに格納するメソッド
-        cpu_can_put_list = []
-        cpu_can_put_all_list = []
+        __cpu_can_put_list = []
+        __cpu_can_put_all_list = []
         for row in range(8):
             for column in range(8):
                 if board.board_range(row, column) and board.can_reverse_on_board(row, column, self.stone, self.enemy_stone) and board.is_blank(row, column):
-                    cpu_can_put_list.append(row)
-                    cpu_can_put_list.append(column)
-                    cpu_can_put_all_list.append(cpu_can_put_list)
-                    cpu_can_put_list = []
-        return cpu_can_put_all_list
+                    __cpu_can_put_list.append(row)
+                    __cpu_can_put_list.append(column)
+                    __cpu_can_put_all_list.append(__cpu_can_put_list)
+                    __cpu_can_put_list = []
+        return __cpu_can_put_all_list
     
     def cpu_put(self, board: OthelloBoard) -> int:  # CPUが置いた座標を返すメソッド
         self.selected_coordinate = random.choice(self.can_put_coordinate(board))

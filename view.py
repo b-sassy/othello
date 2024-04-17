@@ -1,11 +1,5 @@
-from typing import Any
 from model import Stone, OthelloBoard, HumanPlayer, CpuPlayer
-from typing import Protocol
 
-
-class IO(Protocol):
-    def coordinate(self, stone: Stone):
-        pass
 
 # 標準入出力に関するクラス
 class StandardIO:

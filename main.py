@@ -9,10 +9,10 @@ def main(mode):
     arrangement_stone.show_board(use_board.get_board())  # 現状のボードの表示
     # 対戦モードの選択（スクリプト実行時に渡す引数でモードの切り替え）
     if mode == "PvP":  # 対人
-        player_1 = HumanPlayer(Stone.WHITE)
-        player_2 = HumanPlayer(Stone.BLACK)
+        player_1 = HumanPlayer(Stone.WHITE, arrangement_stone)
+        player_2 = HumanPlayer(Stone.BLACK, arrangement_stone)
     if mode == "PvC":  # 対CPU
-        player_1 = HumanPlayer(Stone.WHITE)
+        player_1 = HumanPlayer(Stone.WHITE, arrangement_stone)
         player_2 = CpuPlayer(Stone.BLACK)
     if mode == "CvC":  # CPU対CPU
         player_1 = CpuPlayer(Stone.WHITE)
@@ -24,7 +24,8 @@ def main(mode):
                 arrangement_stone.show_can_put(player_1, use_board)  # 石を置くことが出来る座標の表示。
                 player_1.select_coordinate(Stone.WHITE.name, use_board)  # プレイヤー1からの入力を受け取って、数値を返す。
                 player_1.put_stone(player_1.row, player_1.column, use_board) # プレイヤー1が石を置く処理
-            except Exception:
+            except Exception as e:
+                print(e)
                 arrangement_stone.can_not_put()  # エラーメッセージの表示
                 arrangement_stone.show_board(use_board.get_board())  # 現状のボードの表示。
                 continue  # 指定した座標に石が置けなかったら、置けるまでプレイヤーはそのまま。
