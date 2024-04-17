@@ -1,5 +1,7 @@
 import random
 from enum import Enum
+# from view import IO
+
 
 # 石に関するクラス
 class Stone(Enum):
@@ -16,9 +18,9 @@ class OthelloBoard():
         self.__board[3][4] = Stone.BLACK
         self.__board[4][3] = Stone.BLACK
         self.__board[4][4] = Stone.WHITE
-        self.zahyou_idou = [-1, 0, 1]  # 置いた石の全方位を網羅するためのリスト。
-        self.white_result_list = 0
-        self.black_result_list = 0
+        self.__zahyou_idou = [-1, 0, 1]  # 置いた石の全方位を網羅するためのリスト。
+        self.__white_result = 0
+        self.__black_result_list = 0
 
     def get_board(self) -> list:  # ボードのリストを返すメソッド
         return self.__board
@@ -40,8 +42,8 @@ class OthelloBoard():
         return self.__board[row][column] == Stone.BLANK
 
     def can_reverse_on_board(self, row: int, column: int, stone: Stone, enemy_stone: Stone) -> bool:  # 石を置くことで、反転する石があるかを確認するメソッド
-        for row_idou in self.zahyou_idou:
-            for column_idou in self.zahyou_idou:
+        for row_idou in self.__zahyou_idou:
+            for column_idou in self.__zahyou_idou:
                 try:
                     if row + row_idou <= -1 or column + column_idou <= -1:  # リストの範囲を超えた場合はエラーを起こす。
                         raise IndexError
@@ -64,8 +66,8 @@ class OthelloBoard():
         return False  # この処理を行う過程で、Trueが返されない場合は、反転できる意思が1つもないことを表すのでFalseを返す。
 
     def reverse_stones(self, row: int, column: int, stone: Stone, enemy_stone: Stone) -> None:  # 石を反転するメソッド
-        for row_idou in self.zahyou_idou:
-            for column_idou in self.zahyou_idou:
+        for row_idou in self.__zahyou_idou:
+            for column_idou in self.__zahyou_idou:
                 try:
                     if row + row_idou <= -1 or column + column_idou <= -1:  # リストの範囲を超えた場合はエラーを起こす。
                         raise IndexError
@@ -89,21 +91,67 @@ class OthelloBoard():
                 
     def victory_judge(self, final_board: list) -> bool:  # 勝ち負けを判定するメソッド
         for i in range(8):
-            self.white_result_list += final_board[i].count(Stone.WHITE)
-            self.black_result_list += final_board[i].count(Stone.BLACK)
-        if self.white_result_list > self.black_result_list:  # 白い石が黒石より多い時は、Trueを返す。
+            self.__white_result += final_board[i].count(Stone.WHITE)
+            self.__black_result_list += final_board[i].count(Stone.BLACK)
+        if self.__white_result > self.__black_result_list:  # 白い石が黒石より多い時は、Trueを返す。
             return True
-        if self.black_result_list > self.white_result_list:
+        if self.__black_result_list > self.__white_result:
             return False
 
 
 # プレーヤーに関するクラス。
-class OthelloPlayer:
+class HumanPlayer:
+    def __init__(self, stone: Stone):  # 自分の石と、相手の石の状態を持つ。
+        self.stone = stone
+        self.enemy_stone = self.player_stone_reverse(self.stone)
+
+    def select_coordinate(self, stone: Stone, board: OthelloBoard) -> int:  # 受け取った入力を返すメソッド
+        self.row, self.column = map(int, input(f"プレイヤー{stone} : ").split())
+        return self.row, self.column
+
+    def put_stone(self, row: int, column: int, board: OthelloBoard) -> None:  # 石をボード上に置くメソッド
+        board.change_board(row, column, self.stone, self.enemy_stone)
+
+    def player_stone_reverse(self, stone: Stone) -> Stone:  # 持っている石と逆の石(相手の石)を返すメソッド
+        if stone == Stone.BLACK:
+            return Stone.WHITE
+        if stone == Stone.WHITE:
+            return Stone.BLACK
+        
+    def can_put_judge(self, board: OthelloBoard) -> bool:  # 石を置くことが出来る座標があるかを確認するメソッド
+        judge_list = []
+        for row in range(8):
+            for column in range(8):
+                if board.board_range(row, column) and board.can_reverse_on_board(row, column, self.stone, self.enemy_stone) and board.is_blank(row, column):
+                    judge_list.append(1)
+        if judge_list.count(1) > 0:
+            return True
+        return False
+
+    def can_put_coordinate(self, board: OthelloBoard) -> list:  # 石を置くことが出来る座標をリストに格納するメソッド
+        cpu_can_put_list = []
+        cpu_can_put_all_list = []
+        for row in range(8):
+            for column in range(8):
+                if board.board_range(row, column) and board.can_reverse_on_board(row, column, self.stone, self.enemy_stone) and board.is_blank(row, column):
+                    cpu_can_put_list.append(row)
+                    cpu_can_put_list.append(column)
+                    cpu_can_put_all_list.append(cpu_can_put_list)
+                    cpu_can_put_list = []
+        return cpu_can_put_all_list
+    
+
+class CpuPlayer:
     def __init__(self, stone: Stone):  # 自分の石と、相手の石の状態を持つ。
         self.stone = stone
         self.enemy_stone = self.player_stone_reverse(stone)
 
+    def select_coordinate(self, stone: Stone, board: OthelloBoard) -> int:  # 受け取った入力を返すメソッド
+        self.cpu_put(board)
+        return self.row, self.column
+
     def put_stone(self, row: int, column: int, board: OthelloBoard) -> None:  # 石をボード上に置くメソッド
+        self.cpu_put(board)
         board.change_board(row, column, self.stone, self.enemy_stone)  
 
     def player_stone_reverse(self, stone: Stone) -> Stone:  # 持っている石と逆の石(相手の石)を返すメソッド
@@ -117,12 +165,12 @@ class OthelloPlayer:
         for row in range(8):
             for column in range(8):
                 if board.board_range(row, column) and board.can_reverse_on_board(row, column, self.stone, self.enemy_stone) and board.is_blank(row, column):
-                    judge_list.append("True")
-        if judge_list.count("True") > 0:
+                    judge_list.append(1)
+        if judge_list.count(1) > 0:
             return True
         return False
 
-    def cpu_random_select(self, board: OthelloBoard) -> list:  # 石を置くことが出来る座標をリストに格納するメソッド
+    def can_put_coordinate(self, board: OthelloBoard) -> list:  # 石を置くことが出来る座標をリストに格納するメソッド
         cpu_can_put_list = []
         cpu_can_put_all_list = []
         for row in range(8):
@@ -135,7 +183,6 @@ class OthelloPlayer:
         return cpu_can_put_all_list
     
     def cpu_put(self, board: OthelloBoard) -> int:  # CPUが置いた座標を返すメソッド
-        self.selected_coordinate = random.choice(self.cpu_random_select(board))
+        self.selected_coordinate = random.choice(self.can_put_coordinate(board))
         self.row, self.column = self.selected_coordinate[0], self.selected_coordinate[1]
         return self.row, self.column
-    

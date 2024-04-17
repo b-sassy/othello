@@ -1,9 +1,16 @@
-from model import Stone, OthelloBoard, OthelloPlayer
+from typing import Any
+from model import Stone, OthelloBoard, HumanPlayer, CpuPlayer
+from typing import Protocol
 
 
-# 入出力に関するクラス
+class IO(Protocol):
+    def coordinate(self, stone: Stone):
+        pass
+
+# 標準入出力に関するクラス
 class StandardIO:
-    def input_coordinate(self, stone: Stone) -> int:  # 受け取った入力を返すメソッド
+
+    def coordinate(self, stone: Stone):
         self.row, self.column = map(int, input(f"プレイヤー{stone} : ").split())
         return self.row, self.column
 
@@ -29,8 +36,8 @@ class StandardIO:
         if not board.victory_judge(final_board):
             print("黒の勝ちです。")
     
-    def show_can_put(self, player: OthelloPlayer, board: OthelloBoard):  # 石を置くことが出来る座標を表示するメソッド
-        print(f"{player.stone.name}を置ける座標", * player.cpu_random_select(board))
+    def show_can_put(self, player: HumanPlayer, board: OthelloBoard):  # 石を置くことが出来る座標を表示するメソッド
+        print(f"{player.stone.name}を置ける座標", * player.can_put_coordinate(board))
 
-    def show_put_coordinate(self, player: OthelloPlayer, board: OthelloBoard, stone: Stone):  # 石を置いた座標を表示するメソッド
+    def show_put_coordinate(self, player: CpuPlayer, board: OthelloBoard, stone: Stone):  # 石を置いた座標を表示するメソッド
         print(f"プレイヤー{stone}(CPU) :", " ".join(list(map(str, player.cpu_put(board)))))
