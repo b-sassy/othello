@@ -4,7 +4,7 @@ from model import Stone, OthelloBoard, HumanPlayer, CpuPlayer
 # 標準入出力に関するクラス
 class StandardIO:
 
-    def coordinate(self, stone: Stone):
+    def receive_coordinates(self, stone: Stone):
         self.row, self.column = map(int, input(f"プレイヤー{stone} : ").split())
         return self.row, self.column
 
@@ -20,18 +20,18 @@ class StandardIO:
             print(*list(map(self.__show_stone, a_row)))
         print("====================================")
     
-    def can_not_put(self):
+    def show_error_message(self):
         print("ここには置けません。もう1度置いてください。")
         print("====================================")
 
-    def show_victory(self, board: OthelloBoard, final_board: list) -> None:  # 勝ち負けを出力するメソッド
-        if board.victory_judge(final_board):
+    def show_result(self, board: OthelloBoard, final_board: list) -> None:  # 勝ち負けを出力するメソッド
+        if board.judge_victory(final_board):
             print("白の勝ちです。")
-        if not board.victory_judge(final_board):
+        if not board.judge_victory(final_board):
             print("黒の勝ちです。")
     
-    def show_can_put(self, player: HumanPlayer, board: OthelloBoard):  # 石を置くことが出来る座標を表示するメソッド
-        print(f"{player.stone.name}を置ける座標", * player.can_put_coordinate(board))
+    def show_selectable_coordinates(self, player: HumanPlayer, board: OthelloBoard):  # 石を置くことが出来る座標を表示するメソッド
+        print(f"{player.stone.name}を置ける座標", * player.get_selectable_coordinates_list(board))
 
-    def show_put_coordinate(self, player: CpuPlayer, board: OthelloBoard, stone: Stone):  # 石を置いた座標を表示するメソッド
-        print(f"プレイヤー{stone}(CPU) :", " ".join(list(map(str, player.cpu_put(board)))))
+    def show_selected_coordinates(self, player: CpuPlayer, board: OthelloBoard, stone: Stone):  # 石を置いた座標を表示するメソッド
+        print(f"プレイヤー{stone}(CPU) :", " ".join(list(map(str, player.cpu_put_stone(board)))))
