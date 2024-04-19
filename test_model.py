@@ -55,6 +55,7 @@ class TestPlayer1(unittest.TestCase):
     def test_a_select_coordinates(self):
         # 入力された座標の一致
         self.assertEqual(playrer1.select_coordinates(playrer1.stone, use_board), (2, 4))
+        
 
     def test_a_select_coordinates_discrepancy(self):
         # 入力された座標の不一致

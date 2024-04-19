@@ -1,11 +1,11 @@
 import argparse
 from model import Stone, OthelloBoard, HumanPlayer, CpuPlayer
-from view import StandardIO
+from view import StandardIO, StreamlitIO
 
 
 def main(mode):
     use_board = OthelloBoard()  # ボードのインスタンスの生成
-    arrangement_stone = StandardIO()  # 入力を受け取るインスタンスの生成
+    arrangement_stone = StreamlitIO()  # 入力を受け取るインスタンスの生成
     arrangement_stone.show_board(use_board.get_board())  # 現状のボードの表示
     # 対戦モードの選択（スクリプト実行時に渡す引数でモードの切り替え）
     if mode == "PvP":  # 対人
