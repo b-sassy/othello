@@ -120,8 +120,15 @@ class HumanPlayer:
         self.input_coordinates = input_coordinates
 
     def select_coordinates(self, stone: Stone, board: OthelloBoard) -> int:  # 受け取った入力を返すメソッド
-        self.row, self.column = map(int, self.input_coordinates.receive_coordinates(stone))
-        return self.row, self.column
+        try:
+            self.row, self.column = map(int, self.input_coordinates.receive_coordinates(stone))
+            if not self.row >= 0 or not self.row <= 7 or not self.column >= 0 or not self.column <= 7:
+                return False
+            if not isinstance(self.row, int) or not isinstance(self.column, int):
+                raise TypeError(f"Argument 'self.row' must be an int object. But acutual: {type(self.row, self.column)}.")    
+            return self.row, self.column
+        except Exception:
+            return False
 
     def put_stone(self, row: int, column: int, board: OthelloBoard) -> None:  # 石をボード上に置くメソッド
         board.update_board(row, column, self.stone, self.hostile_stone)
