@@ -34,11 +34,25 @@ class OthelloBoard():
         raise ValueError  # 石を置ける座標を超えてしまった場合、すでに石が乗っている場合は、エラーを起こす。
     
     def is_board_range(self, row: int, column: int) -> bool:  # 指定した座標がボードの座標の範囲内かを確認するメソッド。
-        if row >= 0 and row <= 7 and column >= 0 and column <= 7:
-            return True
+        try:
+            if row >= 0 and row <= 7 and column >= 0 and column <= 7:
+                return True
+            if not isinstance(row, int) or not isinstance(column, int):
+                raise TypeError(f"Argument 'row' must be an int object. But acutual: {type(row, column)}.")
+            return False
+        except Exception:
+            return False
 
     def is_blank(self, row: int, column: int) -> bool:  # 石がボード上に存在しているかを確認するメソッド
-        return self.__board[row][column] == Stone.BLANK
+        try:
+            if not row >= 0 and not row <= 7 or not column >= 0 and not column <= 7:
+                raise IndexError
+            if not isinstance(row, int) or not isinstance(column, int):
+                raise TypeError(f"Argument 'row' must be an int object. But acutual: {type(row, column)}.")
+            if self.__board[row][column] == Stone.BLANK:
+                return True
+        except Exception:
+            return False      
 
     def reversible_stones_exist(self, row: int, column: int, stone: Stone, hostile_stone: Stone) -> bool:  # 石を置くことで、反転する石があるかを確認するメソッド
         for row_idou in self.__zahyou_idou:
@@ -46,7 +60,7 @@ class OthelloBoard():
                 try:
                     if row + row_idou <= -1 or column + column_idou <= -1:  # リストの範囲を超えた場合はエラーを起こす。
                         raise IndexError
-                except IndexError:
+                except Exception:
                     continue
                 try:
                     if self.__board[row + row_idou][column + column_idou] == hostile_stone:  # 指定した座標の周りに敵の石があった場合の処理。
@@ -58,9 +72,9 @@ class OthelloBoard():
                                     break
                                 if self.__board[row + row_idou * reverse_check][column + column_idou * reverse_check] == stone:  # 1つでも自分の石があれば反転できるので、この場合はTrueを返す。
                                     return True
-                            except IndexError:  # 範囲外であれば、最後まで続ける。
+                            except Exception:  # 範囲外であれば、最後まで続ける。
                                 continue
-                except IndexError:  # 置いた座標の周りにある敵の石の数が複数あれば、別の石に移る。
+                except Exception:  # 置いた座標の周りにある敵の石の数が複数あれば、別の石に移る。
                     continue
         return False  # この処理を行う過程で、Trueが返されない場合は、反転できる意思が1つもないことを表すのでFalseを返す。
 
